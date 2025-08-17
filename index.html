@@ -19,7 +19,7 @@
 
     .menu {
       position: absolute;
-      top: 58%; /* رُفعت شوي للأعلى */
+      top: 58%;
       left: 50%;
       transform: translateX(-50%);
       width: 280px;
@@ -59,7 +59,7 @@
 <body>
   <div class="menu" id="freecam-menu">
     <div class="menu-item active">Spawn Vehicle</div>
-    <div class="menu-item">Explode Nearby Vehicles</div>
+    <div class="menu-item">Explode111 Nearby Vehicles</div>
     <div class="menu-item">Delete Nearby Objects</div>
     <div class="menu-item">Teleport to Waypoint</div>
     <div class="menu-item">Toggle NoClip</div>
@@ -79,7 +79,7 @@
         item.classList.remove('active');
         if (i === selectedIndex) {
           item.classList.add('active');
-          // تمرير تلقائي ناعم للزر المحدد
+          // تمرير تلقائي ناعم
           item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         }
       });
@@ -90,13 +90,30 @@
       item.classList.add('pressed');
       setTimeout(() => item.classList.remove('pressed'), 120);
 
-      // إرسال الإجراء إلى FiveM
+      // إرسال إلى FiveM
       window.parent.postMessage({
         type: 'freecam_action',
         action: item.textContent.trim()
       }, '*');
     }
 
+    // استقبال الرسائل من MachoSendDuiMessage
+    window.addEventListener('message', function(event) {
+      const data = event.data;
+      if (data.type === 'keyPressed') {
+        if (data.key === 'ArrowUp') {
+          selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+          updateSelection();
+        } else if (data.key === 'ArrowDown') {
+          selectedIndex = (selectedIndex + 1) % items.length;
+          updateSelection();
+        } else if (data.key === 'Enter') {
+          triggerPress();
+        }
+      }
+    });
+
+    // دعم الكيبورد المحلي (إذا استخدمت الماوس أو الكيبورد مباشرة)
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowUp') {
         e.preventDefault();
@@ -112,6 +129,7 @@
       }
     });
 
+    // بدء التشغيل
     updateSelection();
   </script>
 </body>
